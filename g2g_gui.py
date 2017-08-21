@@ -11,7 +11,7 @@ from tkinter import *
 from os import path, access, R_OK, W_OK
 
 top = tkinter.Tk()
-top.title("Gerber to Graphtec")
+top.title("OhmBoard Gerber to Graphtec")
 
 Gerber_name = StringVar()
 Output_name = StringVar()
@@ -351,12 +351,14 @@ else:
   Label(top, text="Cutter Device Name").grid(row=11, column=0, sticky=W)
 Entry(top, bd =1, width=60, textvariable=cutter_shared_name_str).grid(row=11, column=1, sticky=E)
 
-tkinter.Button(top, width=40, text="Show Gerber in Gerbv", command=show_gerber).grid(row=12, column=1)
-tkinter.Button(top, width=40, text="Create Graphtec File from Input", command=main_program).grid(row=13, column=1)
-tkinter.Button(top, width=40, text="Send Graphtec File to Silhouette Cutter", command=Send_to_Cutter).grid(row=14, column=1)
-tkinter.Button(top, width=40, text="Save Configuration", command=Save_Configuration).grid(row=15, column=1)
-tkinter.Button(top, width=40, text="Exit", command=Just_Exit).grid(row=16, column=1)
-tkinter.Button(top, width=40, text="Create test_forces Graphtec file", command=test_forces).grid(row=17, column=1)
+tkinter.Button(top, width=40, text="Show Gerber in Gerbv", command=show_gerber).grid(row=12, column=1, padx=5, pady=0)
+tkinter.Button(top, width=40, text="Create test_forces Graphtec file", command=test_forces).grid(row=13, column=1, padx=5, pady=0)
+tkinter.Button(top, width=40, text="Create Graphtec File from Input", command=main_program).grid(row=14, column=1, padx=5, pady=0)
+
+tkinter.Button(top, width=40, text="Send Graphtec File to Silhouette Cutter", command=Send_to_Cutter).grid(row=15, column=1, padx=5, pady=5)
+tkinter.Button(top, width=40, text="Save Configuration", command=Save_Configuration).grid(row=16, column=1, padx=5, pady=5)
+
+tkinter.Button(top, width=40, text="Exit", command=Just_Exit).grid(row=17, column=1, padx=5, pady=10)
 
 
 if path.isfile(CONFPATH) and access(CONFPATH, R_OK):
@@ -391,7 +393,7 @@ if not output_filename:
     output_filename="result.txt"
 if not gerbv_filename:
     if os.name=='nt':
-        gerbv_filename="C:/Program Files (x86)/gerbv-2.6.0/bin/gerbv.exe"
+        gerbv_filename="C:/Program Files/gerbv-2.6.0/bin/gerbv.exe"
     else:
         gerbv_filename="gerbv"
 if not pstoedit_filename:
