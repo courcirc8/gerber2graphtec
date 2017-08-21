@@ -5,11 +5,27 @@
 #
 # Cut fine-pitch SMT stencils from a gerber file using a Graphtec craft/vinyl cutter (e.g. Silhouette Cameo or Portrait)
 #
-# Copyright (c) 2012 Peter Monta <pmonta@gmail.com>
+# Original Copyright (c) 2012 Peter Monta <pmonta@gmail.com>
+# Further modifications by OhmBoard Design GP.
 #
+
+from distutils import spawn
+find_in_path = spawn.find_executable
 
 import sys
 import os
+
+#
+# check dependencies
+#
+
+if find_in_path("pstoedit") is None:
+	print("FATAL ERROR: Could not find 'pstoedit' in your PATH. Exiting")
+	sys.exit(1)
+	
+if find_in_path("gerbv") is None:
+	print("ERROR: Could not find 'gerbv' in your PATH. Exiting")
+	sys.exit(1)
 
 #
 # parse arguments
@@ -24,10 +40,12 @@ cut_mode = 0
 input_filename = ''
 media_size = (12,11)
 theta = 0
+out_file = sys.stdout
 
 def floats(s):
   return list(map(float, s.split(',')))
 
+# FIXME: Use Python's Argparser library instead of this.
 argc = 1
 while argc<len(sys.argv):
   x = sys.argv[argc]
@@ -54,7 +72,10 @@ while argc<len(sys.argv):
     argc = argc + 2
   elif x=='--rotate':
     theta = float(sys.argv[argc+1])
-    argc = argc + 1
+    argc = argc + 2
+  elif x=='--out':
+    out_file = sys.argv[argc+1]
+    argc = argc + 2
   else:
     input_filename = sys.argv[argc]
     argc = argc + 1
@@ -71,6 +92,7 @@ if not input_filename:
   print('  --cut_mode [0|1]    0 for highest accuracy (fine pitch), 1 for highest speed')
   print('  --media_size x,y    size of media')
   print('  --rotate theta      rotate counterclockwise by theta degrees')
+  print('  --out-file          Output file name [optional]')
   print('')
   print('defaults:')
   print('  --offset 4.0,0.5    suitable for letter size (portrait) on the Cameo, fed as "media" not "mat"')
@@ -81,6 +103,7 @@ if not input_filename:
   print('  --cut_mode 0        highest accuracy')
   print('  --media_size 12,11  use a media size of 12 inches in x, 11 inches in y')
   print('  --rotate 0          no rotation')
+  print('  --out sys.stdout    print to Terminal output')
   print('')
   sys.exit(1)
 
@@ -90,6 +113,9 @@ if not input_filename:
 
 temp_pdf = "_tmp_gerber.pdf"
 temp_pic = "_tmp_gerber.pic"
+if out_file is not sys.stdout:
+  temp_pdf = out_file+".pdf"
+  temp_pic = out_file+".pic"
 
 if input_filename[-3:].lower()=='pdf':
   os.system("pstoedit -f pic %s %s 2>/dev/null" % (input_filename,temp_pic))
@@ -104,6 +130,11 @@ else:
 import graphtec
 import pic
 import optimize
+
+# change the output stream
+original_stdout = sys.stdout
+if out_file is not sys.stdout:
+  sys.stdout = open(out_file, 'w')
 
 g = graphtec.graphtec()
 
@@ -142,3 +173,8 @@ else:
       g.closed_path(border_path)
 
 g.end()
+
+if sys.stdout != original_stdout:
+    sys.stdout = original_stdout
+    print("gerber2graphtec Done.")
+
