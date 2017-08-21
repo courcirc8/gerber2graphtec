@@ -17,17 +17,6 @@ import sys
 import os
 
 def main():
-    #
-    # check dependencies
-    #
-    if find_in_path("pstoedit") is None:
-        print("FATAL ERROR: Could not find 'pstoedit' in your PATH. Exiting")
-        sys.exit(1)
-    
-    if find_in_path("gerbv") is None:
-        print("ERROR: Could not find 'gerbv' in your PATH. Exiting")
-        sys.exit(1)
-
     floats = lambda s: map(float,s.split(','))
 
     parser = argparse.ArgumentParser()
@@ -47,10 +36,22 @@ def main():
         help='size of media (default: 12x11 inches)')
     parser.add_argument('--rotate', type=float, dest='theta', default=0.,
         help='rotate counterclockwise by theta degrees (default: no rotation)')
-    parser.add_argument('--out',dest='out_file',default=sys.stdout)
-    parser.add_argument('input_filename')
+    parser.add_argument('--out',dest='out_file',default=sys.stdout, help='Name of output file (default: Output Stream)')
+    parser.add_argument('input_filename', help='Gerber or PDF file name')
 
     args = parser.parse_args()
+    
+    #
+    # check dependencies
+    #
+    
+    if find_in_path("pstoedit") is None:
+        print("FATAL ERROR: Could not find 'pstoedit' in your PATH. Exiting")
+        sys.exit(1)
+    
+    if find_in_path("gerbv") is None:
+        print("ERROR: Could not find 'gerbv' in your PATH. Exiting")
+        sys.exit(1)
 
     #
     # convert file to pic format
@@ -69,6 +70,7 @@ def main():
     else:
       os.system('gerbv --export=pdf --output="%s" --border=20 "%s"' % (temp_pdf,input_filename))
       os.system('pstoedit -f pic "%s" "%s" 2>/dev/null' % (temp_pdf,temp_pic))
+
     #
     # main program
     #
