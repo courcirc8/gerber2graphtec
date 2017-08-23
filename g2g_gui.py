@@ -109,11 +109,12 @@ def show_gerber():
 
   head, tail = os.path.split(Gerber_name.get())
 
-  if not os.path.exists(gerbv_path.get()):
+  # FIXME: Find a cross-platform solution for finding this path
+  if os.name=='nt' and not os.path.exists(gerbv_path.get()):
     tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for gerbv is invalid.")
     return
 
-  if not os.path.exists(pstoedit_path.get()):
+  if os.name=='nt' and not os.path.exists(pstoedit_path.get()):
     tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for pstoedit is invalid.")
     return
 
