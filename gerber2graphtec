@@ -13,6 +13,7 @@ from distutils import spawn
 find_in_path = spawn.find_executable
 
 import argparse
+import tempfile
 import sys
 import os
 
@@ -57,10 +58,12 @@ def main():
     # convert file to pic format
     #
 
-    temp_pdf = "_tmp_gerber.pdf"
-    temp_pic = "_tmp_gerber.pic"
+    temp_dir = tempfile.gettempdir()
+    temp_pdf = os.path.join(temp_dir,"_tmp_gerber.pdf")
+    temp_pic = os.path.join(temp_dir,"_tmp_gerber.pic")
     out_file = args.out_file
     if out_file is not sys.stdout:
+      # if an out file was named, keep these as well
       temp_pdf = out_file+".pdf"
       temp_pic = out_file+".pic"
 

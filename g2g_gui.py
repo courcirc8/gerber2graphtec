@@ -46,7 +46,7 @@ force = [8,30]
 cut_mode = 0
 
 def floats(s):
-  return list(map(float,string.split(s,',')))
+  return list(map(float,s.split(',')))
 
 def test_forces():
 
@@ -390,7 +390,7 @@ if path.isfile(CONFPATH) and access(CONFPATH, R_OK):
 if not input_filename:
     input_filename=""
 if not output_filename:
-    output_filename="result.txt"
+    output_filename="result.print"
 if not gerbv_filename:
     if os.name=='nt':
         gerbv_filename="C:/Program Files/gerbv-2.6.0/bin/gerbv.exe"
