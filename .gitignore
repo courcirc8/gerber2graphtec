@@ -5,3 +5,7 @@
 *.pdf
 *.pic
 *.txt
+*.spec
+*.exe
+/build
+/dist
