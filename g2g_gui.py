@@ -11,7 +11,7 @@ from tkinter import *
 from os import path, access, R_OK, W_OK
 
 top = tkinter.Tk()
-top.title("OhmBoard Gerber to Graphtec")
+top.title("Gerber2Graphtec UI - OhmBoard Design")
 
 Gerber_name = StringVar()
 Output_name = StringVar()
@@ -24,7 +24,7 @@ speed_str  = StringVar()
 force_str  = StringVar()
 cut_mode_str  = StringVar()
 cutter_shared_name_str  = StringVar()
-CONFPATH='./g2g_gui.cnf'
+CONFPATH=os.path.join(os.path.expanduser("~"),'gerber2graphtec','g2g_gui.cnf')
 
 input_filename = ''
 output_filename = ''
@@ -96,28 +96,27 @@ def test_forces():
 
   if Output_name.get():
     sys.stdout = original_stdout  # restore STDOUT back to its original value
-    tkinter.messagebox.showinfo("G2G_GUI Message", "File '%s' created" % (Output_name.get()))
+    tkinter.messagebox.showinfo("gerber2graphtec", "File '%s' created" % (Output_name.get()))
 
 
 def show_gerber():
 
-  if not os.path.exists(Gerber_name.get()):
-    get_input_filename()
-  if not os.path.exists(Gerber_name.get()):
-    tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for the input Gerber file is invalid.")
-    return
-
-  head, tail = os.path.split(Gerber_name.get())
-
   # FIXME: Find a cross-platform solution for finding this path
   if os.name=='nt' and not os.path.exists(gerbv_path.get()):
-    tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for gerbv is invalid.")
+    tkinter.messagebox.showerror("Error!", "The path provided for gerbv is invalid.")
     return
 
   if os.name=='nt' and not os.path.exists(pstoedit_path.get()):
-    tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for pstoedit is invalid.")
+    tkinter.messagebox.showerror("Error!", "The path provided for pstoedit is invalid.")
     return
 
+  if not os.path.exists(Gerber_name.get()):
+    get_input_filename()
+  if not os.path.exists(Gerber_name.get()):
+    tkinter.messagebox.showerror("Error!", "The path provided for the input Gerber file is invalid.")
+    return
+
+  head, tail = os.path.split(os.path.normpath(Gerber_name.get()))
   subprocess.Popen([os.path.normpath(gerbv_path.get()), os.path.normpath(Gerber_name.get())])
 
 def main_program():
@@ -128,10 +127,10 @@ def main_program():
   if not os.path.exists(Gerber_name.get()):
     get_input_filename()
   if not os.path.exists(Gerber_name.get()):
-    tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for the input Gerber file is invalid.")
+    tkinter.messagebox.showerror("Error!", "The path provided for the input Gerber file is invalid.")
     return
 
-  head, tail = os.path.split(Gerber_name.get())
+  head, tail = os.path.split(os.path.normpath(Output_name.get()))
 
   if os.name=='nt':
     temp_pdf = os.path.normpath("%s\_tmp_gerber.pdf" % (head))
@@ -143,11 +142,11 @@ def main_program():
 
   if os.name=='nt':
     if not os.path.exists(gerbv_path.get()):
-      tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for gerbv is invalid.")
+      tkinter.messagebox.showerror("Error!", "The path provided for gerbv is invalid.")
       return
 
     if not os.path.exists(pstoedit_path.get()):
-      tkinter.messagebox.showerror("G2G_GUI ERROR", "The path provided for pstoedit is invalid.")
+      tkinter.messagebox.showerror("Error!", "The path provided for pstoedit is invalid.")
       return
 
   if os.name=='nt':
@@ -226,7 +225,7 @@ def main_program():
 
   if Output_name.get():
     sys.stdout = original_stdout  # restore STDOUT back to its original value
-    tkinter.messagebox.showinfo("G2G_GUI Message", "File '%s' created"  % (Output_name.get()) )
+    tkinter.messagebox.showinfo("gerber2graphtec", "File '%s' created"  % (Output_name.get()) )
 
 def Save_Configuration():
     f = open(CONFPATH,'w')
@@ -242,6 +241,7 @@ def Save_Configuration():
     f.write(cut_mode_str.get() + '\n')
     f.write(cutter_shared_name_str.get() + '\n')
     f.close()
+    tkinter.messagebox.showinfo("gerber2graphtec", "Configuration Saved")
 
 def Just_Exit():
     top.destroy()
@@ -254,11 +254,11 @@ def Send_to_Cutter():
     src=os.path.normpath(Output_name.get())
 
     if not cutter_shared_name_str.get():
-      tkinter.messagebox.showerror("G2G_GUI ERROR", "The name of the cutter (as a shared printer) was not provided.")
+      tkinter.messagebox.showerror("Error!", "The name of the cutter (as a shared printer) was not provided.")
       return
 
     #if not os.path.exists(cutter_shared_name_str.get()):
-    #  tkMessageBox.showerror("G2G_GUI ERROR", "The name of the cutter (as a shared printer) does not exist.")
+    #  tkMessageBox.showerror("Error!", "The name of the cutter (as a shared printer) does not exist.")
     #  return
 
     dst=os.path.normpath(cutter_shared_name_str.get())
@@ -270,22 +270,22 @@ def Send_to_Cutter():
 def get_input_filename():
     input_filename=tkinter.filedialog.askopenfilename(title='Select paste mask Gerber file', filetypes=[('Gerber File', '*.g*'),("All files", "*.*")] )
     if input_filename:
-        Gerber_name.set(input_filename)
+        Gerber_name.set(os.path.normpath(input_filename))
 
 def get_output_filename():
-    output_filename=tkinter.filedialog.asksaveasfilename(title='Select output filename', filetypes=[('Output files', '*.txt'),("All files", "*.*")] )
+    output_filename=tkinter.filedialog.asksaveasfilename(title='Select output filename', filetypes=[('Output files', '*.print'),("All files", "*.*")] )
     if output_filename:
-        Output_name.set(output_filename)
+        Output_name.set(os.path.normpath(output_filename))
 
 def get_gerbv_path():
     gerbv_filename=tkinter.filedialog.askopenfilename(title='Select gerbv program', initialfile='gerbv.exe', filetypes=[('Programs', '*.exe')] )
     if gerbv_filename:
-        gerbv_path.set(gerbv_filename)
+        gerbv_path.set(os.path.normpath(gerbv_filename))
 
 def get_pstoedit_path():
     pstoedit_filename=tkinter.filedialog.askopenfilename(title='Select gerbv program', initialfile='pstoedit.exe', filetypes=[('Programs', '*.exe')] )
     if pstoedit_filename:
-        pstoedit_path.set(pstoedit_filename)
+        pstoedit_path.set(os.path.normpath(pstoedit_filename))
 
 def default_offset_str():
     offset_str.set("4.0,0.5")
@@ -391,15 +391,21 @@ if path.isfile(CONFPATH) and access(CONFPATH, R_OK):
 if not input_filename:
     input_filename=""
 if not output_filename:
-    output_filename="result.print"
+    # Get the user's home directory, where things can be written to!
+    home_dir = os.path.expanduser("~")
+    save_path = os.path.join(home_dir,"gerber2graphtec")
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+        
+    output_filename=os.path.join(save_path,"result.print")
 if not gerbv_filename:
     if os.name=='nt':
-        gerbv_filename="C:/Program Files/gerbv-2.6.0/bin/gerbv.exe"
+        gerbv_filename=os.path.join(os.getcwd(),"gerbv.exe")
     else:
         gerbv_filename="gerbv"
 if not pstoedit_filename:
     if os.name=='nt':
-        pstoedit_filename="C:/Program Files/pstoedit/pstoedit.exe"
+        pstoedit_filename=os.path.join(os.environ['PROGRAMFILES(X86)'],"pstoedit","pstoedit.exe")
     else:
         pstoedit_filename="pstoedit"
 if not offset_text:
@@ -432,4 +438,8 @@ force_str.set(force_text)
 cut_mode_str.set(cut_mode_text)
 cutter_shared_name_str.set(cutter_shared_name_text)
 
+try:
+	top.iconbitmap(os.path.join(os.getcwd(),'g2g.ico'))
+except Exception as e:
+	print(e)
 top.mainloop()
