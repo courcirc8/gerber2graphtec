@@ -439,7 +439,7 @@ cut_mode_str.set(cut_mode_text)
 cutter_shared_name_str.set(cutter_shared_name_text)
 
 try:
-	top.iconbitmap(os.path.join(os.getcwd(),'g2g.ico'))
+    top.iconbitmap(os.path.join(os.getcwd(),'g2g.ico'))
 except Exception as e:
-	print(e)
+    print(e)
 top.mainloop()
