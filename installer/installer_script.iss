@@ -19,10 +19,11 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={pf32}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=E:\Personal\Projects\OhmBoardDesign\tools\gerber2graphtec\LICENSE.md
-OutputDir=E:\Personal\Projects\OhmBoardDesign\tools\gerber2graphtec\installer\output
+LicenseFile=..\LICENSE.md
+OutputDir=output
+SetupIconFile=..\g2g.ico
 OutputBaseFilename=g2g_setup
 Compression=lzma
 SolidCompression=yes
@@ -35,9 +36,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\dist\g2g_gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\deps\pstoeditsetup_win32.exe"; DestDir: "{app}"; BeforeInstall: NotifyPS; AfterInstall: RunPSedit
+Source: "..\deps\pstoeditsetup_win32.exe"; DestDir: "{tmp}"; BeforeInstall: NotifyPS; AfterInstall: RunPSedit
 Source: "..\deps\gerbv.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: NotifyGerbv
 Source: "..\dist\gerber2graphtec.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\*.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 ; TODO: Remove registry key on uninstall!
@@ -81,7 +83,7 @@ procedure RunPSedit;
 var
   ResultCode: Integer;
 begin
-  if not Exec(ExpandConstant('{app}\pstoeditsetup_win32.exe'), '', '', SW_SHOWNORMAL,
+  if not Exec(ExpandConstant('{tmp}\pstoeditsetup_win32.exe'), '', '', SW_SHOWNORMAL,
     ewWaitUntilTerminated, ResultCode)
   then
     MsgBox('Other installer failed to run!' + #13#10 +
