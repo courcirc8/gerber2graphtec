@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "gerber2graphtec"
-#define MyAppVersion "0.11"
+#define MyAppVersion "0.31"
 #define MyAppPublisher "OhmBoard Design GP."
 #define MyAppURL "http://www.ohmboarddesign.com/"
 #define MyAppExeName "g2g_gui.exe"

@@ -165,11 +165,11 @@ def main_program():
       return
 
   if os.name=='nt':
-    subprocess.run([os.path.normpath(gerbv_path.get()), "--export=pdf", "--output={}".format(temp_pdf), "--border=0", os.path.normpath(Gerber_name.get())], check=True, stderr=LOG_FILE, stdout=LOG_FILE, stdin=subprocess.DEVNULL)
-    subprocess.run([os.path.normpath(pstoedit_path.get()),"-q","-v", "-f", "pic", temp_pdf,temp_pic], check=True, stderr=LOG_FILE, stdout=LOG_FILE, stdin=subprocess.DEVNULL)
+    subprocess.run([os.path.normpath(gerbv_path.get()), "--export=pdf", "--output={}".format(temp_pdf), "--border=20", os.path.normpath(Gerber_name.get())], check=True, stderr=LOG_FILE, stdout=LOG_FILE, stdin=subprocess.DEVNULL)
+    subprocess.run([os.path.normpath(pstoedit_path.get()), "-f", "pic", temp_pdf,temp_pic], check=True, stderr=LOG_FILE, stdout=LOG_FILE, stdin=subprocess.DEVNULL)
   else:
     # TODO: Change to subprocess.run as well.
-    os.system("%s --export=pdf --output=%s --border=0 \"%s\"" % (os.path.normpath(gerbv_path.get()),temp_pdf,os.path.normpath(Gerber_name.get())))
+    os.system("%s --export=pdf --output=%s --border=20 \"%s\"" % (os.path.normpath(gerbv_path.get()),temp_pdf,os.path.normpath(Gerber_name.get())))
     os.system("%s -q -f pic \"%s\" \"%s\"" % (os.path.normpath(pstoedit_path.get()),temp_pdf,temp_pic))
 
   original_stdout = sys.stdout  # keep a reference to STDOUT

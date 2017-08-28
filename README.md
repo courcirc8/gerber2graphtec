@@ -17,9 +17,9 @@ You may want to have your CAM tool shrink the paste features by about 2 mils bef
 
 With Mac OS X or Windows, the file2graphtec script can take the place of /dev/usb/lp0.  Write gerber2graphtec's output to a temporary file (gerber2graphtec ... >foo), then send it to the cutter (file2graphtec foo).  I've tested file2graphtec on Mac OS X but not on Windows.  For Mac OS X, install XCode and macports, then install the dependencies with
 
-`port install gerbv
-port install pstoedit
-port install libusb`
+`port install gerbv`
+`port install pstoedit`
+`port install libusb`
 
 These will take some time to build.
 
@@ -44,9 +44,14 @@ On some Linux distributions, permissions on /dev/usb/lp0 are restricted by defau
 
 These pages have hints on usage (e.g. on Windows), materials, performance, calibration, etc:
 
+A very good video walkthrough on cutting stencils using this program: https://www.youtube.com/watch?v=KqFHNe6nWpE
+
 http://pmonta.com/blog/2012/12/25/smt-stencil-cutting/
+
 http://dangerousprototypes.com/forum/viewtopic.php?f=68&t=5341
+
 http://hackeda.com/blog/start-printing-pcb-stencils-for-about-200/
+
 http://hackaday.com/2012/12/27/diy-smd-stencils-made-with-a-craft-cutter/
 
 
@@ -57,13 +62,14 @@ An optional GUI has been provided by jesuscf (see the dangerousprototypes.com th
 
 ## Dependencies:
 
-gerbv (>= 2.6.0)
-pstoedit
-Tkinter (when using g2g_gui)
+*gerbv (>= 2.6.0)
+*pstoedit
+*Ghostscript (dependency of pstoedit)
+*Tkinter (when using g2g_gui)
 
 ## Credits:
 
-This is an original tool by Peter Monta [source](https://github.com/pmonta/gerber2graphtec)
+This is an original tool by [Peter Monta](https://github.com/pmonta/gerber2graphtec) currently maintained under OhmBoard Design GP.
 
 Thanks to the authors of robocut and graphtecprint for protocol documentation:
 
