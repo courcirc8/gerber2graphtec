@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "gerber2graphtec"
-#define MyAppVersion "0.1"
+#define MyAppVersion "0.11"
 #define MyAppPublisher "OhmBoard Design GP."
 #define MyAppURL "http://www.ohmboarddesign.com/"
 #define MyAppExeName "g2g_gui.exe"
@@ -19,7 +19,9 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+AppCopyright=GNU General Public License v2
 DefaultDirName={pf32}\{#MyAppName}
+DefaultGroupName=gerber2graphtec
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE.md
 OutputDir=output
@@ -27,6 +29,7 @@ SetupIconFile=..\g2g.ico
 OutputBaseFilename=g2g_setup
 Compression=lzma
 SolidCompression=yes
+AlwaysShowGroupOnReadyPage=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -36,6 +39,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\dist\g2g_gui.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\deps\gs921w32.exe"; DestDir: "{tmp}"; BeforeInstall: NotifyGhostscript; AfterInstall: RunGhostscript
 Source: "..\deps\pstoeditsetup_win32.exe"; DestDir: "{tmp}"; BeforeInstall: NotifyPS; AfterInstall: RunPSedit
 Source: "..\deps\gerbv.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall: NotifyGerbv
 Source: "..\dist\gerber2graphtec.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -51,6 +55,8 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{group}\Gerber2Graphtec UI"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
+Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Code]
 function NeedsAddPath(Param : string): boolean;
@@ -74,6 +80,11 @@ begin
   MsgBox('gerber2graphtec requires the Postscript Editor to run. It will be installed now.', mbInformation, MB_OK);
 end;
 
+procedure NotifyGhostscript;
+begin
+  MsgBox('gerber2graphtec requires Ghostscript to be present in your system. It will be installed now.', mbInformation, MB_OK);
+end;
+
 procedure NotifyGerbv;
 begin
   MsgBox('gerber2graphtec uses gerbv, an open source Gerber file viewer. It will be added to your path along with this tool.', mbInformation, MB_OK);
@@ -84,6 +95,17 @@ var
   ResultCode: Integer;
 begin
   if not Exec(ExpandConstant('{tmp}\pstoeditsetup_win32.exe'), '', '', SW_SHOWNORMAL,
+    ewWaitUntilTerminated, ResultCode)
+  then
+    MsgBox('Other installer failed to run!' + #13#10 +
+      SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+procedure RunGhostscript;
+var
+  ResultCode: Integer;
+begin
+  if not Exec(ExpandConstant('{tmp}\gs921w32.exe'), '', '', SW_SHOWNORMAL,
     ewWaitUntilTerminated, ResultCode)
   then
     MsgBox('Other installer failed to run!' + #13#10 +

@@ -6,9 +6,16 @@ import sys
 import os
 import string
 import subprocess
+import datetime
 
 from tkinter import *
 from os import path, access, R_OK, W_OK
+
+def log(something):
+	timestamp = datetime.datetime.now
+	print("{} G2G: {}".format(timestamp(),something))
+	sys.stdout.flush()
+#end
 
 top = tkinter.Tk()
 top.title("Gerber2Graphtec UI - OhmBoard Design")
@@ -24,7 +31,15 @@ speed_str  = StringVar()
 force_str  = StringVar()
 cut_mode_str  = StringVar()
 cutter_shared_name_str  = StringVar()
-CONFPATH=os.path.join(os.path.expanduser("~"),'gerber2graphtec','g2g_gui.cnf')
+
+APP_PATH = os.path.join(os.path.expanduser("~"),'gerber2graphtec')
+CONFPATH=os.path.join(APP_PATH,'g2g_gui.cnf')
+LOG_PATH=os.path.join(APP_PATH,'g2g.log')
+LOG_FILE = open(LOG_PATH,'a')
+sys.stdout = LOG_FILE
+sys.stderr = LOG_FILE
+log("================================================================================")
+log("New Session Started")
 
 input_filename = ''
 output_filename = ''
@@ -117,7 +132,7 @@ def show_gerber():
     return
 
   head, tail = os.path.split(os.path.normpath(Gerber_name.get()))
-  subprocess.Popen([os.path.normpath(gerbv_path.get()), os.path.normpath(Gerber_name.get())])
+  subprocess.Popen([os.path.normpath(gerbv_path.get()), os.path.normpath(Gerber_name.get())], stdout=LOG_FILE)
 
 def main_program():
   #
@@ -150,10 +165,10 @@ def main_program():
       return
 
   if os.name=='nt':
-    os.system("echo \"%s\" --export=pdf --output=%s --border=0 \"%s\" > \"%s\"" % (os.path.normpath(gerbv_path.get()),temp_pdf,os.path.normpath(Gerber_name.get()),temp_bat))
-    os.system("echo \"%s\" -q -f pic \"%s\" \"%s\" >> \"%s\"" % (os.path.normpath(pstoedit_path.get()),temp_pdf,temp_pic, temp_bat))
-    os.system("\"%s\"" % temp_bat)
+    subprocess.run([os.path.normpath(gerbv_path.get()), "--export=pdf", "--output={}".format(temp_pdf), "--border=0", os.path.normpath(Gerber_name.get())], check=True, stderr=LOG_FILE, stdout=LOG_FILE, stdin=subprocess.DEVNULL)
+    subprocess.run([os.path.normpath(pstoedit_path.get()),"-q","-v", "-f", "pic", temp_pdf,temp_pic], check=True, stderr=LOG_FILE, stdout=LOG_FILE, stdin=subprocess.DEVNULL)
   else:
+    # TODO: Change to subprocess.run as well.
     os.system("%s --export=pdf --output=%s --border=0 \"%s\"" % (os.path.normpath(gerbv_path.get()),temp_pdf,os.path.normpath(Gerber_name.get())))
     os.system("%s -q -f pic \"%s\" \"%s\"" % (os.path.normpath(pstoedit_path.get()),temp_pdf,temp_pic))
 

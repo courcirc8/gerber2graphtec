@@ -7,5 +7,6 @@
 *.txt
 *.spec
 *.exe
+*.bat
 /build
 /dist
