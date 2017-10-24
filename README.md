@@ -62,10 +62,10 @@ An optional GUI has been provided by jesuscf (see the dangerousprototypes.com th
 
 ## Dependencies:
 
-*gerbv (>= 2.6.0)
-*pstoedit
-*Ghostscript (dependency of pstoedit)
-*Tkinter (when using g2g_gui)
+* gerbv (>= 2.6.0)
+* pstoedit
+* Ghostscript (dependency of pstoedit)
+* Tkinter (when using g2g_gui)
 
 ## Credits:
 
