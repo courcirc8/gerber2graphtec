@@ -35,6 +35,10 @@ cutter_shared_name_str  = StringVar()
 APP_PATH = os.path.join(os.path.expanduser("~"),'gerber2graphtec')
 CONFPATH=os.path.join(APP_PATH,'g2g_gui.cnf')
 LOG_PATH=os.path.join(APP_PATH,'g2g.log')
+
+if not os.path.exists(APP_PATH):
+  os.mkdir(APP_PATH)
+
 LOG_FILE = open(LOG_PATH,'a')
 sys.stdout = LOG_FILE
 sys.stderr = LOG_FILE
